@@ -77,7 +77,6 @@ function App() {
 
   return (
     <>
-       <h1 className="mb-5">Shopping List</h1>
       <div className="container d-flex gap-5 justify-content-center">
         <Form>
           <Form.Group controlId="productName">
