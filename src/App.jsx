@@ -1,7 +1,8 @@
 import { nanoid } from "nanoid";
-import { useState } from "react";
-import { Form, Button, Table } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Form, Button, Table, Alert } from "react-bootstrap";
 import styled from "styled-components";
+// import JSConfetti from "js-confetti";
 
 const shops = ["Ethos", "Jumbo", "Kruidvat", "Lidl"];
 const categories = ["Bakery", "Butcher", "Fruit", "Vegetable"];
@@ -17,7 +18,18 @@ function App() {
   const [filteredName, setFilteredName] = useState("");
   const [filteredShop, setFilteredShop] = useState("");
   const [filteredCategory, setFilteredCategory] = useState("");
-  const [filterStatus, setFilterStatus] = useState("All");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [showAlert, setShowAlert] = useState(false);
+
+  useEffect(() => {
+    if (products.length > 0 && products.every((product) => product.isBought)) {
+      setShowAlert(true);
+    } else {
+      setShowAlert(false);
+    }
+  }, [products]);
+
+  // const jsConfetti = new JSConfetti();
 
   const handleAddProduct = () => {
     if (!productName || !productShop || !productCategory) {
@@ -59,11 +71,17 @@ function App() {
     const nameMatch = product.name
       .toLowerCase()
       .includes(filteredName.toLowerCase());
-    const shopMatch = product.shop === filteredShop || filteredShop === "";
+    const shopMatch =
+      product.shop === filteredShop ||
+      filteredShop === "" ||
+      filteredShop === "All Shops";
     const categoryMatch =
-      product.category === filteredCategory || filteredCategory === "";
+      product.category === filteredCategory ||
+      filteredCategory === "" ||
+      filteredCategory === "All Categories";
     const statusMatch =
       filterStatus === "all" ||
+      filterStatus === "" ||
       (filterStatus === "bought" && product.isBought) ||
       (filterStatus === "not-bought" && !product.isBought);
     return nameMatch && shopMatch && categoryMatch && statusMatch;
@@ -77,6 +95,7 @@ function App() {
 
   return (
     <>
+      <h1 className="mb-5">Shopping List</h1>
       <div className="container d-flex gap-5 justify-content-center">
         <Form>
           <Form.Group controlId="productName">
@@ -123,6 +142,7 @@ function App() {
           <Button className="mt-3 mb-5" onClick={handleAddProduct}>
             Add Product
           </Button>
+          {showAlert && <Alert variant="success">Shopping Completed!</Alert>}
         </Form>
 
         {/* FilteredForm */}
@@ -169,9 +189,6 @@ function App() {
             </Form.Control>
           </Form.Group>
 
-          <Button className="mt-3 mb-5" onClick={resetFilters}>
-            Reset Filters
-          </Button>
           <Form.Group className="mt-2 mb-5" controlId="filterStatus">
             <Form.Check
               type="radio"
@@ -179,6 +196,7 @@ function App() {
               name="statusFilter"
               value="all"
               checked={filterStatus === "all"}
+              defaultChecked="true"
               onChange={() => setFilterStatus("all")}
             />
             <Form.Check
@@ -198,6 +216,10 @@ function App() {
               onChange={() => setFilterStatus("not-bought")}
             />
           </Form.Group>
+
+          <Button className="mt-3 mb-5" onClick={resetFilters}>
+            Reset Filters
+          </Button>
         </Form>
       </div>
       {/* Table Div */}

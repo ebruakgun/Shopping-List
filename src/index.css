@@ -16,12 +16,5 @@ h1 {
 
 
 
-{showAlert && <Alert variant="success">Shopping Completed!</Alert>}
 
-useEffect(() => {
-  if (products.length > 0 && products.every((product) => product.isBought)) {
-    setShowAlert(true);
-  } else {
-    setShowAlert(false);
-  }
-}, [products]);
+
